@@ -324,8 +324,7 @@ pipeline {
                             )
                         }
 
-                        // Remove non-Latin filenames that Java/cleanWs cannot handle
-                        sh "rm -rf '${SHARED_WS}/ceph/src/jaegertracing/opentelemetry-cpp/third_party/prometheus-cpp/3rdparty/civetweb/test/nonlatin' || true"
+                        sh "LC_ALL=C find '${SHARED_WS}' -depth -name '*[^[:print:]]*' -exec rm -rf {} + || true"
 
                         echo "Cleaning up shared workspace ..."
                         cleanWs(disableDeferredWipeout: true, deleteDirs: true)

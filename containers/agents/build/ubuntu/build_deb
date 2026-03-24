@@ -17,7 +17,7 @@ cd "${DEB_BUILDAREA}/source/ceph-${VERSION}"
 sudo DEBIAN_FRONTEND=noninteractive apt-get update
 DEBEMAIL="contact@ceph.com" DEBFULLNAME="Ceph Release Team" dch \
     --newversion "${VERSION}" \
-    --distribution "${DIST}" \
+    --distribution "${DIST_VERSION}" \
     --force-distribution \
     "Automated build for ${VERSION}"
 
@@ -45,16 +45,16 @@ mv "${DEB_BUILDAREA}/source"/*.buildinfo "${DEB_BUILDAREA}/binary/" 2>/dev/null 
 cat <<EOF > "${RELEASE_BUILDAREA}/conf/distributions"
 Origin: Ceph
 Label: Ceph Dev
-Codename: ${DIST}
+Codename: ${DIST_VERSION}
 Architectures: amd64 source
 Components: main
-Description: Ceph development packages for ${DIST}
+Description: Ceph development packages for ${DIST_VERSION}
 EOF
 
 # Import all .deb files into the repository
 for deb in "${DEB_BUILDAREA}/binary"/*.deb; do
     if [ -f "${deb}" ]; then
-        reprepro -b "${RELEASE_BUILDAREA}" includedeb "${DIST}" "${deb}"
+        reprepro -b "${RELEASE_BUILDAREA}" includedeb "${DIST_VERSION}" "${deb}"
     fi
 done
 

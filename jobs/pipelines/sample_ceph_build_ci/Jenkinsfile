@@ -235,9 +235,10 @@ pipeline {
                         }
                     }
                     environment {
-                        DEB_BUILDAREA="${SHARED_WS}/deb/jammy"
-                        RELEASE_BUILDAREA="${SHARED_WS}/release/jammy"
-                        DIST="jammy"
+                        DIST="ubuntu"
+                        DIST_VERSION="jammy"
+                        DEB_BUILDAREA="${SHARED_WS}/deb/${DIST_VERSION}"
+                        RELEASE_BUILDAREA="${SHARED_WS}/release/${DIST_VERSION}"
                         ARCH="x86_64"
                     }
                     steps {
@@ -252,7 +253,7 @@ pipeline {
 
                         // Archive DEBs
                         echo "DEBs for Ubuntu 22.04 built successfully! Archiving ..."
-                        dir("${ARTIFACTS_DIR}/jammy/${ARCH}") {
+                        dir("${ARTIFACTS_DIR}/${DIST_VERSION}/${ARCH}") {
                             sh """
                                 rsync -a \\
                                     ${RELEASE_BUILDAREA}/db \\
@@ -281,9 +282,10 @@ pipeline {
                         }
                     }
                     environment {
-                        DEB_BUILDAREA="${SHARED_WS}/deb/noble"
-                        RELEASE_BUILDAREA="${SHARED_WS}/release/noble"
-                        DIST="noble"
+                        DIST="ubuntu"
+                        DIST_VERSION="noble"
+                        DEB_BUILDAREA="${SHARED_WS}/deb/${DIST_VERSION}"
+                        RELEASE_BUILDAREA="${SHARED_WS}/release/${DIST_VERSION}"
                         ARCH="x86_64"
                     }
                     steps {
@@ -298,7 +300,7 @@ pipeline {
 
                         // Archive DEBs
                         echo "DEBs for Ubuntu 24.04 built successfully! Archiving ..."
-                        dir("${ARTIFACTS_DIR}/noble/${ARCH}") {
+                        dir("${ARTIFACTS_DIR}/${DIST_VERSION}/${ARCH}") {
                             sh """
                                 rsync -a \\
                                     ${RELEASE_BUILDAREA}/db \\

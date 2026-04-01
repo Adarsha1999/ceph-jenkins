@@ -88,13 +88,13 @@ pipeline {
                         dir("${PULP_PROJECT_DIR}") {
                             checkout([
                                 $class: "GitSCM",
-                                branches: [[name: "main"]],
+                                branches: [[name: "${params.PULP_PROJECT_BRANCH}"]],
                                 extensions: [
                                     [$class: "CloneOption", depth: 1,
                                         shallow: true, noTags: true]
                                 ],
                                 userRemoteConfigs: [
-                                    [url: "${env.PULP_PROJECT_REPO}"]
+                                    [url: params.PULP_PROJECT_REPO ?: env.PULP_PROJECT_REPO]
                                 ]
                             ])
                         }

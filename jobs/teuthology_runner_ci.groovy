@@ -43,6 +43,9 @@ for (jobConfig in jobConfigurations) {
             // Add the required parameters for the job
             parameters {
                 choiceParam("BRANCH", [jobConfig.branch], "Ceph branch to build")
+                stringParam("CEPH_SHA1", "", "Optional: exact Ceph build SHA1 (teuthology-suite -S / --sha1). Leave empty to let Teuthology pick the build from the branch only (-c).")
+                stringParam("TEUTHOLOGY_OWNER", "", "Optional: teuthology-suite --owner (job owner string, e.g. user@host). Leave empty for server default or ~/.teuthology.yaml")
+                stringParam("TEUTHOLOGY_LIMIT", "", "Optional: teuthology-suite -l (max test jobs to queue) for every selected suite stage, e.g. 1. Leave empty for no limit.")
                 booleanParam("SMOKE", false, "Run smoke tests")
                 booleanParam("RGW", false, "Run rgw tests")
                 booleanParam("CEPHFS", false, "Run cephfs tests")

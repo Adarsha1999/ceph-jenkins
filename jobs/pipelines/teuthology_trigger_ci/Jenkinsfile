@@ -6,7 +6,7 @@ def trigger_daily_build(branch) {
         job: jobName,
         parameters: [
             string(name: "BRANCH", value: "${branch}"),
-            string(name: "SMOKE", value: "true"),
+            booleanParam(name: "SMOKE", value: true),
         ]
     ])
 }
@@ -18,11 +18,11 @@ def trigger_weekly_build(branch) {
         job: jobName,
         parameters: [
             string(name: "BRANCH", value: "${branch}"),
-            string(name: "RGW", value: "true"),
-            string(name: "CEPHFS", value: "true"),
-            string(name: "RBD", value: "true"),
-            string(name: "ISCSI", value: "true"),
-            string(name: "NFS", value: "true"),
+            booleanParam(name: "RGW", value: true),
+            booleanParam(name: "CEPHFS", value: true),
+            booleanParam(name: "RBD", value: true),
+            booleanParam(name: "ISCSI", value: true),
+            booleanParam(name: "NFS", value: true),
         ]
     ])
 }

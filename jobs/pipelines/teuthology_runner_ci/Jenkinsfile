@@ -1,13 +1,13 @@
 
-// List of teuthology stages
+// List of teuthology stages: suite = teuthology-suite -s (qa/suites/…)
 def getTeuthologyStages() {
     return [
-        [name: "SMOKE", runnerParams: "--suite smoke"],
-        [name: "RGW", runnerParams: "--suite rgw"],
-        [name: "CEPHFS", runnerParams: "--suite cephfs"],
-        [name: "RBD", runnerParams: "--suite rbd"],
-        [name: "ISCSI", runnerParams: "--suite iscsi"],
-        [name: "NFS", runnerParams: "--suite nfs"],
+        [name: "SMOKE", suite: "smoke"],
+        [name: "RGW", suite: "rgw"],
+        [name: "CEPHFS", suite: "cephfs"],
+        [name: "RBD", suite: "rbd"],
+        [name: "ISCSI", suite: "iscsi"],
+        [name: "NFS", suite: "nfs"],
     ]
 }
 
@@ -23,15 +23,22 @@ def runTeuthologyStage(stageConfig) {
     // Run the teuthology stage
     stage(stageConfig.name) {
         dir(SHARED_WS) {
-            // Set the runner parameters
-            env.RUNNER_PARAMS = "--branch ${params.BRANCH.toLowerCase()} "
-            env.RUNNER_PARAMS += " ${stageConfig.runnerParams}"
-
-            // Run the teuthology runner and waiter scripts
-            sh shell: "/bin/bash", script: """
-                chmod +x ${TEUTHOLOGY_RUNNER_SCRIPT} && . ${TEUTHOLOGY_RUNNER_SCRIPT}
-                chmod +x ${TEUTHOLOGY_WAITER_SCRIPT} && ${TEUTHOLOGY_WAITER_SCRIPT}
-            """
+            def cephSha = (params.CEPH_SHA1 ?: "").trim()
+            def owner = (params.TEUTHOLOGY_OWNER ?: "").trim()
+            def jobLimit = (params.TEUTHOLOGY_LIMIT ?: "").trim()
+            withEnv([
+                "CEPH_REF=${params.BRANCH.toLowerCase()}",
+                "SUITE_NAME=${stageConfig.suite}",
+                "CEPH_SHA1=${cephSha}",
+                "TEUTHOLOGY_OWNER=${owner}",
+                "TEUTHOLOGY_LIMIT=${jobLimit}",
+            ]) {
+                sh """
+                    chmod +x "${env.TEUTHOLOGY_RUNNER_SCRIPT}" "${env.TEUTHOLOGY_WAITER_SCRIPT}"
+                    "${env.TEUTHOLOGY_RUNNER_SCRIPT}"
+                    "${env.TEUTHOLOGY_WAITER_SCRIPT}"
+                """
+            }
         }
     }
 }
@@ -68,6 +75,10 @@ pipeline {
         // Set teuthology runner and waiter script paths
         TEUTHOLOGY_RUNNER_SCRIPT="${TEUTHOLOGY_PIPELINE_DIR}/teuthology-runner.sh"
         TEUTHOLOGY_WAITER_SCRIPT="${TEUTHOLOGY_PIPELINE_DIR}/teuthology-waiter.sh"
+
+        // teuthology-suite: override on the agent or job (see teuthology-suite -m / -p)
+        TEUTHOLOGY_MACHINE_TYPE="openstack"
+        TEUTHOLOGY_PRIORITY="200"
     }
 
     stages {
